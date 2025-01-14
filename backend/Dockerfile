@@ -2,6 +2,9 @@ FROM node:20-alpine3.21
 
 WORKDIR /app
 
+# Installer les dépendances nécessaires pour la compilation
+RUN apk add --no-cache python3 make g++
+
 COPY package.json package.json
 # needed to get exactly the same packages versions as the host machine
 COPY package-lock.json package-lock.json
@@ -13,6 +16,6 @@ RUN npm install
 COPY tsconfig.json tsconfig.json
 COPY src src
 
-EXPOSE 5000
+EXPOSE 5500
 
 CMD ["npm", "start"]

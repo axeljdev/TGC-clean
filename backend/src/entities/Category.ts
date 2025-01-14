@@ -27,7 +27,7 @@ export class Category extends BaseEntity {
   id!: number;
 
   @Column()
-  @Length(10, 100, { message: "Name must be between 10 and 100 chars" })
+  @Length(3, 100, { message: "Name must be between 3 and 100 chars" })
   @Field()
   name!: string;
 
