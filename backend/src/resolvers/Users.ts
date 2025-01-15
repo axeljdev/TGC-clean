@@ -1,10 +1,11 @@
-import { Resolver, Arg, Mutation, Ctx } from "type-graphql";
+import { Resolver, Arg, Mutation, Ctx, Query } from "type-graphql";
 import { CreateUserInput, User } from "../entities/User";
 import { hashPassword } from "../utils/hashage";
 import { validate } from "class-validator";
 import { verify } from "argon2";
 import { sign } from "jsonwebtoken";
 import Cookies from "cookies";
+import { ContextType, getUserFromContext } from "../auth";
 @Resolver()
 export class UsersResolver {
   @Mutation(() => User)
@@ -32,7 +33,7 @@ export class UsersResolver {
   async login(
     @Arg("email") email: string,
     @Arg("password") password: string,
-    @Ctx() context: any
+    @Ctx() context: ContextType
   ): Promise<User> {
     try {
       const user = await User.findOneBy({ email });
@@ -66,5 +67,19 @@ export class UsersResolver {
     } catch (error) {
       throw new Error("Invalid credentials");
     }
+  }
+
+  @Mutation(() => Boolean)
+  async logout(@Ctx() context: ContextType): Promise<boolean> {
+    const cookies = new Cookies(context.req, context.res);
+    cookies.set("token", "", {
+      maxAge: 0,
+    });
+    return true;
+  }
+
+  @Query(() => User, { nullable: true })
+  async whoami(@Ctx() context: ContextType): Promise<User | null> {
+    return getUserFromContext(context);
   }
 }

@@ -62,7 +62,7 @@ export function Ad(
       <Image src={props.picture} />
       <div>
         <h4>{props.title}</h4>
-        <p>{(props.price / 100).toFixed(2)} €</p>
+        <p>{props.price.toFixed(2)} €</p>
         <Tags>
           {props.tags.map((tag) => (
             <span>{tag.name}</span>

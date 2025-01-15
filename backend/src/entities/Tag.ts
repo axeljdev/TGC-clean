@@ -3,11 +3,12 @@ import {
   Column,
   Entity,
   ManyToMany,
-  OneToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Ad } from "./Ad";
 import { Field, ID, InputType, ObjectType } from "type-graphql";
+import { User } from "./User";
 
 @Entity()
 @ObjectType()
@@ -23,6 +24,10 @@ export class Tag extends BaseEntity {
   @ManyToMany(() => Ad, (ad) => ad.tags)
   @Field(() => [Ad])
   ads!: Ad[];
+
+  @ManyToOne(() => User, (user) => user.tags, { nullable: false })
+  @Field(() => User)
+  createdBy!: User;
 }
 
 @InputType()

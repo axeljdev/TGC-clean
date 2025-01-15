@@ -6,7 +6,7 @@ import AdsContainer from "./AdsContainer";
 import { useQuery } from "@apollo/client";
 
 export function RecentAds() {
-  const [showAds, setShowAds] = useState(false);
+  const [showAds, setShowAds] = useState(true);
   const { data, loading } = useQuery<{ ads: AdType[] }>(queryAds, {
     fetchPolicy: "cache-and-network",
   });

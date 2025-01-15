@@ -38,10 +38,18 @@ export function Navbar() {
             </svg>
           </button>
         </form>
-        <Link to="/ads/new" className="button link-button">
+        <Link to="/login" className="button link-button">
+          <span className="mobile-short-label">Connexion</span>
+          <span className="desktop-long-label">Connexion</span>
+        </Link>
+        <Link to="/register" className="button link-button">
+          <span className="mobile-short-label">Inscription</span>
+          <span className="desktop-long-label">Inscription</span>
+        </Link>
+        {/* <Link to="/ads/new" className="button link-button">
           <span className="mobile-short-label">Publier</span>
           <span className="desktop-long-label">Publier une annonce</span>
-        </Link>
+        </Link> */}
       </div>
       <nav className="categories-navigation">
         {loading === true && <p>Chargement</p>}

@@ -1,4 +1,13 @@
-import { Arg, ID, Info, Mutation, Query, Resolver } from "type-graphql";
+import {
+  Arg,
+  Authorized,
+  Ctx,
+  ID,
+  Info,
+  Mutation,
+  Query,
+  Resolver,
+} from "type-graphql";
 import {
   Category,
   CategoryCreateInput,
@@ -8,6 +17,7 @@ import { validate } from "class-validator";
 import { GraphQLResolveInfo } from "graphql";
 import { makeRelations } from "../utils/makeRelations";
 import { In } from "typeorm";
+import { AuthContextType } from "../auth";
 
 function hasRelation(info: GraphQLResolveInfo, relationName: string) {
   const selections = info.fieldNodes[0].selectionSet.selections;
@@ -37,6 +47,7 @@ export class CategoriesResolver {
         ads: {
           tags: true,
         },
+        createdBy: true,
       },
     });
     if (category) {
@@ -46,12 +57,15 @@ export class CategoriesResolver {
     }
   }
 
+  @Authorized()
   @Mutation(() => Category)
   async createCategory(
-    @Arg("data", () => CategoryCreateInput) data: CategoryCreateInput
+    @Arg("data", () => CategoryCreateInput) data: CategoryCreateInput,
+    @Ctx() context: AuthContextType
   ): Promise<Category> {
     const newCategory = new Category();
-    Object.assign(newCategory, data);
+    const user = context.user;
+    Object.assign(newCategory, data, { createdBy: user });
 
     const errors = await validate(newCategory);
     if (errors.length > 0) {
@@ -65,9 +79,13 @@ export class CategoriesResolver {
   @Mutation(() => Category, { nullable: true })
   async updateCategory(
     @Arg("id", () => ID) id: number,
-    @Arg("data", () => CategoryUpdateInput) data: CategoryUpdateInput
+    @Arg("data", () => CategoryUpdateInput) data: CategoryUpdateInput,
+    @Ctx() context: AuthContextType
   ): Promise<Category | null> {
-    const category = await Category.findOneBy({ id });
+    const category = await Category.findOneBy({
+      id,
+      createdBy: { id: context.user.id },
+    });
     if (category !== null) {
       Object.assign(category, data);
 
@@ -83,24 +101,35 @@ export class CategoriesResolver {
     }
   }
 
+  @Authorized()
   @Mutation(() => Category, { nullable: true })
   async deleteCategory(
-    @Arg("id", () => ID) id: number
+    @Arg("id", () => ID) id: number,
+    @Ctx() context: AuthContextType
   ): Promise<Category | null> {
-    const category = await Category.findOneBy({ id });
+    const category = await Category.findOneBy({
+      id,
+      createdBy: { id: context.user.id },
+    });
     if (category !== null) {
       await category.remove();
+      category.id = id;
       return category;
     } else {
       return null;
     }
   }
 
+  @Authorized()
   @Mutation(() => [Category])
   async deleteCategories(
-    @Arg("ids", () => [ID]) ids: number[]
+    @Arg("ids", () => [ID]) ids: number[],
+    @Ctx() context: AuthContextType
   ): Promise<Category[]> {
-    const categories = await Category.findBy({ id: In(ids) });
+    const categories = await Category.findBy({
+      id: In(ids),
+      createdBy: { id: context.user.id },
+    });
     await Category.delete({
       id: In(ids),
     });

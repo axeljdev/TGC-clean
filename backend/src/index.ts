@@ -7,6 +7,7 @@ import { CategoriesResolver } from "./resolvers/Categories";
 import { AdsResolver } from "./resolvers/Ads";
 import { TagsResolver } from "./resolvers/Tags";
 import { UsersResolver } from "./resolvers/Users";
+import { authChecker } from "./auth";
 
 async function initialize() {
   await datasource.initialize();
@@ -14,6 +15,7 @@ async function initialize() {
 
   const schema = await buildSchema({
     resolvers: [CategoriesResolver, AdsResolver, TagsResolver, UsersResolver],
+    authChecker,
   });
 
   const server = new ApolloServer({ schema });

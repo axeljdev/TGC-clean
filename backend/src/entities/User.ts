@@ -1,6 +1,14 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  OneToMany,
+} from "typeorm";
 import { Field, ID, InputType, ObjectType } from "type-graphql";
 import { IsEmail, IsStrongPassword } from "class-validator";
+import { Ad } from "./Ad";
+import { Tag } from "./Tag";
 
 @Entity()
 @ObjectType()
@@ -15,6 +23,14 @@ export class User extends BaseEntity {
 
   @Column()
   hashedPassword: string;
+
+  @OneToMany(() => Ad, (ad) => ad.createdBy)
+  @Field(() => [Ad])
+  ads: Ad[];
+
+  @OneToMany(() => Tag, (tag) => tag.createdBy)
+  @Field(() => [Tag])
+  tags: Tag[];
 }
 
 @InputType()

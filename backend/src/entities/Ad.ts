@@ -14,6 +14,7 @@ import { Category } from "./Category";
 import { Tag } from "./Tag";
 import { Field, ID, InputType, Int, ObjectType } from "type-graphql";
 import { IdInput } from "./Id";
+import { User } from "./User";
 
 @Entity()
 @ObjectType()
@@ -69,6 +70,10 @@ export class Ad extends BaseEntity {
   @Column()
   @Field()
   createdAt!: Date;
+
+  @ManyToOne(() => User, (user) => user.ads, { nullable: false })
+  @Field(() => User)
+  createdBy!: User;
 
   @BeforeInsert()
   private setCreatedAt() {

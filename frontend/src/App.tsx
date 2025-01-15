@@ -7,9 +7,11 @@ import { AdPage } from "./pages/Ad";
 import { AdEditorPage } from "./pages/AdEditor";
 import { CategoryPage } from "./pages/Category";
 import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
 
 const client = new ApolloClient({
-  uri: "http://localhost:5000",
+  uri: "http://localhost:5500",
   cache: new InMemoryCache(),
 });
 
@@ -25,6 +27,8 @@ function App() {
             <Route path="/ads/:id/edit" Component={AdEditorPage} />
             <Route path="/ads/new" Component={AdEditorPage} />
             <Route path="/about" Component={AboutPage} />
+            <Route path="/login" Component={LoginPage} />
+            <Route path="/register" Component={RegisterPage} />
             <Route path="*" Component={() => <Navigate to="/" />} />
           </Route>
         </Routes>
