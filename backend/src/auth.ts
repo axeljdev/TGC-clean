@@ -19,6 +19,8 @@ export async function getUserFromContext(
   const cookies = new Cookies(context.req, context.res);
   const token = cookies.get("token");
 
+  console.log("Token from cookie:", token);
+
   if (!token) {
     console.log("No token found in cookies");
     return null;
@@ -27,11 +29,12 @@ export async function getUserFromContext(
     const payload = jwtVerify(token, process.env.JWT_SECRET) as unknown as {
       id: number;
     };
-    console.log("Token is valid");
+    console.log("Token decoded successfully:", payload);
+
     const user = await User.findOneBy({ id: payload.id });
     return user;
   } catch (error) {
-    console.log("Invalid token");
+    console.log("Error verifying token:", error);
     return null;
   }
 }

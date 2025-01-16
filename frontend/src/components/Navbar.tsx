@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
 import { Category } from "./Category";
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { CategoryType } from "../types";
 import { queryCategories } from "../api/categories";
+import { queryWhoami } from "../api/whoami";
+import { mutationLogout } from "../api/logout";
 
 export function Navbar() {
   const { data, loading } = useQuery<{ categories: CategoryType[] }>(
@@ -10,6 +12,19 @@ export function Navbar() {
   );
   const categories = data?.categories;
 
+  const { data: whoamiData } = useQuery(queryWhoami);
+  const me = whoamiData?.whoami;
+
+  const [doSignout] = useMutation(mutationLogout, {
+    refetchQueries: [queryWhoami],
+  });
+
+  async function onSignout() {
+    doSignout();
+  }
+  console.log("me =>", me);
+
+  console.log(me);
   return (
     <header className="header">
       <div className="main-menu">
@@ -38,18 +53,29 @@ export function Navbar() {
             </svg>
           </button>
         </form>
-        <Link to="/login" className="button link-button">
-          <span className="mobile-short-label">Connexion</span>
-          <span className="desktop-long-label">Connexion</span>
-        </Link>
-        <Link to="/register" className="button link-button">
-          <span className="mobile-short-label">Inscription</span>
-          <span className="desktop-long-label">Inscription</span>
-        </Link>
-        {/* <Link to="/ads/new" className="button link-button">
-          <span className="mobile-short-label">Publier</span>
-          <span className="desktop-long-label">Publier une annonce</span>
-        </Link> */}
+        {me ? (
+          <>
+            <button className="button link-button bg-primary text-white">
+              <span className="mobile-short-label">+ Annonce</span>
+              <span className="desktop-long-label">+ Annonce</span>
+            </button>
+            <button onClick={onSignout} className="button link-button">
+              <span className="mobile-short-label">Déconnexion</span>
+              <span className="desktop-long-label">Déconnexion</span>
+            </button>
+          </>
+        ) : me === null ? (
+          <>
+            <Link to="/login" className="button link-button">
+              <span className="mobile-short-label">Connexion</span>
+              <span className="desktop-long-label">Connexion</span>
+            </Link>
+            <Link to="/register" className="button link-button">
+              <span className="mobile-short-label">Inscription</span>
+              <span className="desktop-long-label">Inscription</span>
+            </Link>
+          </>
+        ) : null}
       </div>
       <nav className="categories-navigation">
         {loading === true && <p>Chargement</p>}

@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 * {
   box-sizing: border-box;
 }
@@ -197,4 +201,8 @@ h1 {
   height: 1px;
   background-color: lightgray;
   border: none;
+}
+
+.input {
+  @apply w-full border border-gray-300 rounded-md p-2 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary;
 }

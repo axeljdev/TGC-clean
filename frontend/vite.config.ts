@@ -8,6 +8,11 @@ export default defineConfig({
     watch: {
       usePolling: true,
     },
+    proxy: {
+      "/api": {
+        target: "http://back:5500",
+      },
+    },
   },
 });
 

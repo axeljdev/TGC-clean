@@ -3,11 +3,11 @@ import { Navbar } from "./Navbar";
 
 export function PageLayout() {
   return (
-    <body>
+    <>
       <Navbar />
       <main className="main-content">
         <Outlet />
       </main>
-    </body>
+    </>
   );
 }

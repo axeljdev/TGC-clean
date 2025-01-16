@@ -23,6 +23,9 @@ export class UsersResolver {
       const hashedPassword = await hashPassword(data.password);
       Object.assign(newUser, data, { hashedPassword, password: undefined });
       await newUser.save();
+
+      // send email
+
       return newUser;
     } catch (error) {
       throw new Error("Erreur lors de la création de l'utilisateur");
@@ -65,7 +68,7 @@ export class UsersResolver {
         return null;
       }
     } catch (error) {
-      throw new Error("Invalid credentials");
+      return null;
     }
   }
 
